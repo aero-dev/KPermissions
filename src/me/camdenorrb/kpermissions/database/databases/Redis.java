@@ -39,6 +39,7 @@ public class Redis implements Database<Jedis> {
     public void setPlayerRank(UUID uuid, String rankName) {
         KPermissions.runAsync(() -> {
             try (Jedis jedis = jedisPool.getResource()) {
+                jedis.select(1);
                 jedis.hset("player:" + uuid, "Rank", rankName);
             }
         });
@@ -48,7 +49,6 @@ public class Redis implements Database<Jedis> {
     public void getRank(String rankName, Call<RankInfo> call) {
         KPermissions.runAsync(() -> {
             try (Jedis jedis = jedisPool.getResource()) {
-                jedis.select(1);
                 call.call(gson.fromJson(jedis.hget("set:ranks", rankName), RankInfo.class));
             }
         });
@@ -58,7 +58,6 @@ public class Redis implements Database<Jedis> {
     public void remRank(String rankName) {
         KPermissions.runAsync(() -> {
             try (Jedis jedis = jedisPool.getResource()) {
-                jedis.select(1);
                 jedis.hdel("set:ranks", rankName);
             }
         });
@@ -68,7 +67,6 @@ public class Redis implements Database<Jedis> {
     public void setRank(RankInfo rankInfo) {
         KPermissions.runAsync(() -> {
             try (Jedis jedis = jedisPool.getResource()) {
-                jedis.select(1);
                 jedis.hset("set:ranks", rankInfo.getName(), gson.toJson(rankInfo));
             }
         });
@@ -78,7 +76,6 @@ public class Redis implements Database<Jedis> {
     public void getRanks(Call<Set<RankInfo>> call) {
         KPermissions.runAsync(() -> {
             try (Jedis jedis = jedisPool.getResource()) {
-                jedis.select(1);
                 Set<RankInfo> rankInfoSet = new HashSet<>();
                 for (String string : jedis.hkeys("set:ranks")) rankInfoSet.add(gson.fromJson(string, RankInfo.class));
                 call.call(rankInfoSet);
@@ -90,6 +87,7 @@ public class Redis implements Database<Jedis> {
     public void getPlayerRank(UUID uuid, Call<RankInfo> call) {
         KPermissions.runAsync(() -> {
             try (Jedis jedis = jedisPool.getResource()) {
+                jedis.select(1);
                 String rankName = jedis.hget("player:" + uuid, "Rank");
                 if (rankName == null) { call.onFail(); return; }
                 RankInfo rankInfo = KPermissions.RANKS.get(rankName);
