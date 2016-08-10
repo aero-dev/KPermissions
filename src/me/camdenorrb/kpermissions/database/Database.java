@@ -9,22 +9,22 @@ import java.util.UUID;
 /**
  * Created by camdenorrb on 8/8/16.
  */
-public interface Database<T extends AutoCloseable> {
+public abstract class Database<T extends AutoCloseable> {
 
-    T getResource();
+    abstract T getResource();
 
-    String getName();
+    abstract String getName();
 
-    void remRank(String rankName);
+    abstract void remRank(String rankName);
 
-    void setRank(RankInfo rankInfo);
+    abstract void setRank(RankInfo rankInfo);
 
-    void getRanks(Call<Set<RankInfo>> call);
+    abstract void getRanks(Call<Set<RankInfo>> call);
 
-    void setPlayerRank(UUID uuid, String rankName);
+    abstract  void setPlayerRank(UUID uuid, String rankName);
 
-    void getRank(String rankName, Call<RankInfo> call);
+    abstract void getPlayerRank(UUID uuid, Call<RankInfo> call);
 
-    void getPlayerRank(UUID uuid, Call<RankInfo> call);
+    abstract  void getRank(String rankName, Call<RankInfo> call);
 
 }
