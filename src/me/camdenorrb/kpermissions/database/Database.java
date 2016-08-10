@@ -13,6 +13,8 @@ public interface Database<T extends AutoCloseable> {
 
     T getResource();
 
+    String getName();
+
     void remRank(String rankName);
 
     void setRank(RankInfo rankInfo);
@@ -21,7 +23,7 @@ public interface Database<T extends AutoCloseable> {
 
     void setPlayerRank(UUID uuid, String rankName);
 
-    void getRank(String name, Call<RankInfo> call);
+    void getRank(String rankName, Call<RankInfo> call);
 
     void getPlayerRank(UUID uuid, Call<RankInfo> call);
 
