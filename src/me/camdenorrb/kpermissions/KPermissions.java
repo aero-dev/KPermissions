@@ -25,5 +25,4 @@ public class KPermissions extends JavaPlugin {
         Bukkit.getScheduler().runTaskAsynchronously(instance, runnable);
     }
 
-
 }

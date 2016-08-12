@@ -1,5 +1,6 @@
 package me.camdenorrb.kpermissions.database;
 
+import com.google.gson.Gson;
 import me.camdenorrb.kpermissions.rank.RankInfo;
 import me.camdenorrb.kpermissions.utils.Call;
 
@@ -11,20 +12,22 @@ import java.util.UUID;
  */
 public abstract class Database<T extends AutoCloseable> {
 
-    abstract T getResource();
+    protected static final Gson gson = new Gson();
 
-    abstract String getName();
+    public abstract T getResource();
 
-    abstract void remRank(String rankName);
+    public abstract void remRank(String rankName);
 
-    abstract void setRank(RankInfo rankInfo);
+    public abstract void setRank(RankInfo rankInfo);
 
-    abstract void getRanks(Call<Set<RankInfo>> call);
+    public abstract void getRanks(Call<Set<RankInfo>> call);
 
-    abstract  void setPlayerRank(UUID uuid, String rankName);
+    public String getName() { return getClass().getSimpleName(); }
 
-    abstract void getPlayerRank(UUID uuid, Call<RankInfo> call);
+    public abstract void setPlayerRank(UUID uuid, String rankName);
 
-    abstract  void getRank(String rankName, Call<RankInfo> call);
+    public abstract void getPlayerRank(UUID uuid, Call<RankInfo> call);
+
+    public abstract void getRank(String rankName, Call<RankInfo> call);
 
 }

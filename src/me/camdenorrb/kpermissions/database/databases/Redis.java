@@ -1,6 +1,5 @@
 package me.camdenorrb.kpermissions.database.databases;
 
-import com.google.gson.Gson;
 import me.camdenorrb.kpermissions.KPermissions;
 import me.camdenorrb.kpermissions.database.Database;
 import me.camdenorrb.kpermissions.rank.RankInfo;
@@ -8,7 +7,6 @@ import me.camdenorrb.kpermissions.utils.Call;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
-
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -16,18 +14,12 @@ import java.util.UUID;
 /**
  * Created by camdenorrb on 8/9/16.
  */
-public class Redis implements Database<Jedis> {
+public class Redis extends Database<Jedis> {
 
     private final JedisPool jedisPool;
-    private final Gson gson = new Gson();
 
     public Redis(String host, String password, int timeout, int port) {
         jedisPool = new JedisPool(new JedisPoolConfig(), host, port, timeout, password);
-    }
-
-    @Override
-    public String getName() {
-        return "Redis";
     }
 
     @Override
@@ -36,10 +28,18 @@ public class Redis implements Database<Jedis> {
     }
 
     @Override
+    public void remRank(String rankName) {
+        KPermissions.runAsync(() -> {
+            try (Jedis jedis = jedisPool.getResource()) {
+                jedis.hdel("set:ranks", rankName);
+            }
+        });
+    }
+
+    @Override
     public void setPlayerRank(UUID uuid, String rankName) {
         KPermissions.runAsync(() -> {
             try (Jedis jedis = jedisPool.getResource()) {
-                jedis.select(1);
                 jedis.hset("player:" + uuid, "Rank", rankName);
             }
         });
@@ -50,15 +50,6 @@ public class Redis implements Database<Jedis> {
         KPermissions.runAsync(() -> {
             try (Jedis jedis = jedisPool.getResource()) {
                 call.call(gson.fromJson(jedis.hget("set:ranks", rankName), RankInfo.class));
-            }
-        });
-    }
-
-    @Override
-    public void remRank(String rankName) {
-        KPermissions.runAsync(() -> {
-            try (Jedis jedis = jedisPool.getResource()) {
-                jedis.hdel("set:ranks", rankName);
             }
         });
     }
@@ -87,9 +78,10 @@ public class Redis implements Database<Jedis> {
     public void getPlayerRank(UUID uuid, Call<RankInfo> call) {
         KPermissions.runAsync(() -> {
             try (Jedis jedis = jedisPool.getResource()) {
-                jedis.select(1);
+
                 String rankName = jedis.hget("player:" + uuid, "Rank");
                 if (rankName == null) { call.onFail(); return; }
+
                 RankInfo rankInfo = KPermissions.RANKS.get(rankName);
                 if (rankInfo == null) call.onFail();
                 else call.call(rankInfo);
