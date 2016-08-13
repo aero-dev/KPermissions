@@ -1,5 +1,6 @@
 package me.camdenorrb.kpermissions.rank;
 
+import me.camdenorrb.kpermissions.KPermissions;
 import me.camdenorrb.kpermissions.utils.ChatUtils;
 
 /**
@@ -10,11 +11,10 @@ public class RankInfo {
     private int level;
     private String name, prefix, tabPrefix;
 
-    public RankInfo(String name, int level, String prefix, String tabPrefix) {
+    public RankInfo(String name, int level, String prefix) {
         this.name = name;
         this.level = level;
         this.prefix = ChatUtils.format(prefix);
-        this.tabPrefix = ChatUtils.format(tabPrefix);
     }
 
     public int getLevel() {
@@ -29,10 +29,6 @@ public class RankInfo {
         return prefix;
     }
 
-    public String getTabPrefix() {
-        return tabPrefix;
-    }
-
     public void setName(String name) {
         this.name = name;
     }
@@ -45,8 +41,10 @@ public class RankInfo {
         this.prefix = prefix;
     }
 
-    public void setTabPrefix(String tabPrefix) {
-        this.tabPrefix = tabPrefix;
+    public String getBoardName() {
+        int position = KPermissions.RANKS.size() - level;
+        char p = 'A';
+        if (position >= 10) while ((position -= 10) >= 10) p++;
+        return Character.toString(p) + position;
     }
-
 }
