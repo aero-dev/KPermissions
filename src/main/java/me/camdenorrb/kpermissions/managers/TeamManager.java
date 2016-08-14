@@ -18,13 +18,8 @@ public class TeamManager {
     }
 
     public void remove(Player player) {
-
         rankBoard.getTeams().forEach(team -> team.removeEntry(player.getDisplayName()));
-        for (Player player1 : Bukkit.getOnlinePlayers()) {
-            Scoreboard scoreboard1 = player1.getScoreboard();
-            if (scoreboard1 == mainBoard || scoreboard1 == rankBoard) continue;
-            player1.getScoreboard().getTeams().forEach(team -> team.removeEntry(player.getDisplayName()));
-        }
+        Bukkit.getOnlinePlayers().forEach(player1 -> player1.getScoreboard().getTeams().forEach(team -> team.removeEntry(player.getDisplayName())));
     }
 
     private Scoreboard setupTeams(Scoreboard scoreboard) {
