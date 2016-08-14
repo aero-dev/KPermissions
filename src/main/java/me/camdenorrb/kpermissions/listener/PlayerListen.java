@@ -18,8 +18,8 @@ public class PlayerListen implements Listener {
     @EventHandler
     public void onLeave(PlayerQuitEvent event) {
         Player player = event.getPlayer();
+        KPermissions.teamManager.remove(player);
         KPermissions.uuidRankMap.remove(player.getUniqueId());
-        KPermissions.scoreManager.remove(player.getDisplayName());
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
@@ -28,7 +28,7 @@ public class PlayerListen implements Listener {
         UUID uuid = player.getUniqueId();
         KPermissions.database.getPlayerRank(uuid, rankInfo -> {
             KPermissions.uuidRankMap.put(uuid, rankInfo);
-            KPermissions.scoreManager.setEntry(player.getDisplayName(), rankInfo);
+            KPermissions.teamManager.setup(player, rankInfo.getBoardName());
         });
     }
 }

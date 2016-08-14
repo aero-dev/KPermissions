@@ -3,7 +3,7 @@ package me.camdenorrb.kpermissions;
 import me.camdenorrb.kpermissions.bungee.BungeeMessageListen;
 import me.camdenorrb.kpermissions.database.Database;
 import me.camdenorrb.kpermissions.database.databases.Redis;
-import me.camdenorrb.kpermissions.managers.ScoreManager;
+import me.camdenorrb.kpermissions.managers.TeamManager;
 import me.camdenorrb.kpermissions.rank.RankInfo;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -22,8 +22,8 @@ public class KPermissions extends JavaPlugin {
     public static Database<?> database;
     public static KPermissions instance;
 
+    public static transient TeamManager teamManager;
     public static transient Map<String, RankInfo> ranks = new HashMap<>();
-    public static transient ScoreManager scoreManager = new ScoreManager();
     public static transient Map<UUID, RankInfo> uuidRankMap = new HashMap<>();
 
     @Override
@@ -31,6 +31,8 @@ public class KPermissions extends JavaPlugin {
         instance = this;
         initBungee();
         initAllData();
+
+        teamManager = new TeamManager();
     }
 
     @Override
@@ -61,15 +63,12 @@ public class KPermissions extends JavaPlugin {
         for (Player player : getServer().getOnlinePlayers()) {
             UUID uuid = player.getUniqueId();
             database.getPlayerRank(uuid, rankInfo -> {
-                scoreManager.add(player.getName(), rankInfo);
+                teamManager.setup(player, rankInfo.getBoardName());
                 uuidRankMap.put(uuid, rankInfo);
             });
         }
 
-        database.getRanks(rankInfos -> rankInfos.forEach(rankInfo -> {
-            ranks.put(rankInfo.getName(), rankInfo);
-            scoreManager.setTeam(rankInfo.getBoardName(), rankInfo.getPrefix());
-        }));
+        database.getRanks(rankInfos -> rankInfos.forEach(rankInfo -> {ranks.put(rankInfo.getName(), rankInfo);}));
     }
 
 }

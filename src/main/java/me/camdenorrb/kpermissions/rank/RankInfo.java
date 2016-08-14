@@ -1,6 +1,5 @@
 package me.camdenorrb.kpermissions.rank;
 
-import me.camdenorrb.kpermissions.KPermissions;
 import me.camdenorrb.kpermissions.utils.ChatUtils;
 
 /**
@@ -42,7 +41,7 @@ public class RankInfo {
     }
 
     public String getBoardName() {
-        int position = KPermissions.ranks.size() - level;
+        int position = level;
         char p = 'A';
         if (position >= 10) while ((position -= 10) >= 10) p++;
         return Character.toString(p) + position;
