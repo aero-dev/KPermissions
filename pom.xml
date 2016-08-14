@@ -6,7 +6,10 @@
 
     <groupId>groupId</groupId>
     <artifactId>KPermissions</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <configuration>
+        <source>1.8</source>
+        <target>1.8</target>
+    </configuration>
 
     <repositories>
     <repository>
