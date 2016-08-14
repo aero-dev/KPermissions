@@ -22,9 +22,23 @@ public class BungeeMessageListen implements PluginMessageListener {
     public void onPluginMessageReceived(String channel, Player player, byte[] message) {
         if (!channel.equals("BungeeCord")) return;
         ByteArrayDataInput in = ByteStreams.newDataInput(message);
-        if (in.readUTF().equals("RankUpdate")) {
-            UUID uuid = UUID.fromString(in.readUTF());
-            if (Bukkit.getPlayer(uuid) != null) KPermissions.uuidRankMap.put(uuid, gson.fromJson(in.readUTF(), RankInfo.class));
+
+        switch (in.readUTF()) {
+
+            case "RankRemove":
+                KPermissions.ranks.remove(in.readUTF());
+                break;
+
+            case "RankCreate":
+                RankInfo rankInfo = gson.fromJson(in.readUTF(), RankInfo.class);
+                KPermissions.ranks.put(rankInfo.getName(), rankInfo);
+                break;
+
+            case "RankUpdate":
+                UUID uuid = UUID.fromString(in.readUTF());
+                if (Bukkit.getPlayer(uuid) != null)
+                    KPermissions.uuidRankMap.put(uuid, gson.fromJson(in.readUTF(), RankInfo.class));
+                break;
         }
     }
 }

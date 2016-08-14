@@ -46,19 +46,19 @@ public class Redis extends Database<Jedis> {
     }
 
     @Override
-    public void getRank(String rankName, Call<RankInfo> call) {
+    public void setRank(RankInfo rankInfo) {
         KPermissions.runAsync(() -> {
             try (Jedis jedis = jedisPool.getResource()) {
-                call.call(gson.fromJson(jedis.hget("set:ranks", rankName), RankInfo.class));
+                jedis.hset("set:ranks", rankInfo.getName(), gson.toJson(rankInfo));
             }
         });
     }
 
     @Override
-    public void setRank(RankInfo rankInfo) {
+    public void getRank(String rankName, Call<RankInfo> call) {
         KPermissions.runAsync(() -> {
             try (Jedis jedis = jedisPool.getResource()) {
-                jedis.hset("set:ranks", rankInfo.getName(), gson.toJson(rankInfo));
+                call.call(gson.fromJson(jedis.hget("set:ranks", rankName), RankInfo.class));
             }
         });
     }
