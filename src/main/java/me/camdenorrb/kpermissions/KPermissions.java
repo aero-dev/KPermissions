@@ -20,7 +20,7 @@ import java.util.UUID;
 public class KPermissions extends JavaPlugin {
 
     public static Database<?> database;
-    public static KPermissions instance;
+    private static KPermissions instance;
 
     public static transient TeamManager teamManager;
     public static transient Map<String, RankInfo> ranks = new HashMap<>();
@@ -69,6 +69,10 @@ public class KPermissions extends JavaPlugin {
         }
 
         database.getRanks(rankInfos -> rankInfos.forEach(rankInfo -> {ranks.put(rankInfo.getName(), rankInfo);}));
+    }
+    
+    public static KPermissions getInstance() {
+        return instance;
     }
 
 }
