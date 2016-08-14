@@ -49,8 +49,8 @@ public class KPermissions extends JavaPlugin {
     private void initBungee() {
         if (getConfig().getBoolean("bungeecord", false)) {
             Messenger messenger = getServer().getMessenger();
-            messenger.registerOutgoingPluginChannel(this, "BungeeCord");
-            messenger.registerIncomingPluginChannel(this, "BungeeCord", new BungeeMessageListen());
+            messenger.registerOutgoingPluginChannel(instance, "BungeeCord");
+            messenger.registerIncomingPluginChannel(instance, "BungeeCord", new BungeeMessageListen());
         }
     }
 
