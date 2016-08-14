@@ -22,9 +22,9 @@ public class KPermissions extends JavaPlugin {
     public static Database<?> database;
     public static KPermissions instance;
 
-    public static Map<String, RankInfo> ranks = new HashMap<>();
-    public static ScoreManager scoreManager = new ScoreManager();
-    public static Map<UUID, RankInfo> uuidRankMap = new HashMap<>();
+    public static transient Map<String, RankInfo> ranks = new HashMap<>();
+    public static transient ScoreManager scoreManager = new ScoreManager();
+    public static transient Map<UUID, RankInfo> uuidRankMap = new HashMap<>();
 
     @Override
     public void onEnable() {
@@ -53,9 +53,7 @@ public class KPermissions extends JavaPlugin {
     }
 
     private void initAllData() {
-
         saveDefaultConfig();
-
         int timeout = getConfig().getInt("timeout", 2000), port = getConfig().getInt("port", 6379);
         String host = getConfig().getString("host", "127.0.0.1"), password = getConfig().getString("password", "");
         database = new Redis(host, password, timeout, port);

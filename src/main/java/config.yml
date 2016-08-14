@@ -2,5 +2,12 @@
 # Requires the Bungeecord plugin dependency.
 bungeecord: false
 
+#List of Database names are on the resource page.
+database: "Redis"
+
+
+
+
+
 
 
