@@ -82,7 +82,7 @@ public class Redis extends Database<Jedis> {
                 String rankName = jedis.hget("player:" + uuid, "Rank");
                 if (rankName == null) { call.onFail(); return; }
 
-                RankInfo rankInfo = KPermissions.RANKS.get(rankName);
+                RankInfo rankInfo = KPermissions.ranks.get(rankName);
                 if (rankInfo == null) call.onFail();
                 else call.call(rankInfo);
             }

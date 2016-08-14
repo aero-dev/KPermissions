@@ -9,7 +9,7 @@ import me.camdenorrb.kpermissions.utils.ChatUtils;
 public class RankInfo {
 
     private int level;
-    private String name, prefix, tabPrefix;
+    private String name, prefix;
 
     public RankInfo(String name, int level, String prefix) {
         this.name = name;
@@ -42,7 +42,7 @@ public class RankInfo {
     }
 
     public String getBoardName() {
-        int position = KPermissions.RANKS.size() - level;
+        int position = KPermissions.ranks.size() - level;
         char p = 'A';
         if (position >= 10) while ((position -= 10) >= 10) p++;
         return Character.toString(p) + position;

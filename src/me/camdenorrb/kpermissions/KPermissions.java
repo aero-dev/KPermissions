@@ -1,10 +1,14 @@
 package me.camdenorrb.kpermissions;
 
+import me.camdenorrb.kpermissions.bungee.BungeeMessageListen;
 import me.camdenorrb.kpermissions.database.Database;
+import me.camdenorrb.kpermissions.database.databases.Redis;
 import me.camdenorrb.kpermissions.managers.ScoreManager;
 import me.camdenorrb.kpermissions.rank.RankInfo;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.plugin.messaging.Messenger;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,10 +29,8 @@ public class KPermissions extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
-        database.getRanks(rankInfos -> rankInfos.forEach(rankInfo -> {
-            ranks.put(rankInfo.getName(), rankInfo);
-            scoreManager.setTeam(rankInfo.getBoardName(), rankInfo.getPrefix());
-        }));
+        initBungee();
+        initAllData();
     }
 
     @Override
@@ -40,6 +42,36 @@ public class KPermissions extends JavaPlugin {
 
     public static void runAsync(Runnable runnable) {
         Bukkit.getScheduler().runTaskAsynchronously(instance, runnable);
+    }
+
+    private void initBungee() {
+        if (getConfig().getBoolean("bungeecord", false)) {
+            Messenger messenger = getServer().getMessenger();
+            messenger.registerOutgoingPluginChannel(this, "BungeeCord");
+            messenger.registerIncomingPluginChannel(this, "BungeeCord", new BungeeMessageListen());
+        }
+    }
+
+    private void initAllData() {
+
+        saveDefaultConfig();
+
+        int timeout = getConfig().getInt("timeout", 2000), port = getConfig().getInt("port", 6379);
+        String host = getConfig().getString("host", "127.0.0.1"), password = getConfig().getString("password", "");
+        database = new Redis(host, password, timeout, port);
+
+        for (Player player : getServer().getOnlinePlayers()) {
+            UUID uuid = player.getUniqueId();
+            database.getPlayerRank(uuid, rankInfo -> {
+                scoreManager.add(player.getName(), rankInfo);
+                uuidRankMap.put(uuid, rankInfo);
+            });
+        }
+
+        database.getRanks(rankInfos -> rankInfos.forEach(rankInfo -> {
+            ranks.put(rankInfo.getName(), rankInfo);
+            scoreManager.setTeam(rankInfo.getBoardName(), rankInfo.getPrefix());
+        }));
     }
 
 }
