@@ -2,8 +2,17 @@
 # Requires the Bungeecord plugin dependency.
 bungeecord: false
 
-#List of Database names are on the resource page.
+#List of Database names are on the resource page, it is case sensitive.
 database: "Redis"
+
+#Fill the following info, if you are not using Yaml or Json.
+host: "127.0.0.1"
+
+password: ""
+
+timeout: 2000
+
+port: 6379
 
 
 
